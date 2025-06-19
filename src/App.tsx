@@ -13,6 +13,8 @@ import SeedMenuPage from './pages/SeedMenuPage';
 import CartPage from './pages/CartPage';
 import OrdersPage from './pages/OrdersPage';
 import CustomerPage from './pages/CustomerPage';
+import ContactPage from './pages/ContactPage';
+
 
 // Role based
 import AdminPage from './pages/AdminPage';
@@ -26,6 +28,7 @@ import ManagerPage from './pages/ManagerPage';
 import HQManagerPage from './pages/HQManagerPage';
 import OpenAreaPage from './pages/OpenAreaPage';
 import SupportPage from './pages/SupportPage';
+import FeedbackPage from './pages/FeedbackPage';
 
 import './index.css';
 
@@ -45,6 +48,9 @@ const App: React.FC = () => {
             <Route path="/seed-menu" element={<SeedMenuPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/feedback" element={<FeedbackPage />} />
+
 
             {/* Customer */}
             <Route path="/customer" element={<CustomerPage />} />
@@ -61,6 +67,7 @@ const App: React.FC = () => {
             <Route path="/hq" element={<HQManagerPage />} />
             <Route path="/openarea" element={<OpenAreaPage />} />
             <Route path="/support" element={<SupportPage />} />
+            
           </Routes>
         </Router>
       </CartProvider>

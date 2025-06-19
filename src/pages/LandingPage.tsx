@@ -15,7 +15,6 @@ const LandingPage: React.FC = () => {
           <p>Delicious Food. Fast Service. Happy Customers.</p>
           <div className="hero-buttons">
             <button className="btn" onClick={() => navigate('/menu')}>Order Now</button>
-            {!user && <Link to="/login" className="btn">Staff Login</Link>}
           </div>
         </div>
       </header>

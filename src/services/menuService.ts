@@ -7,6 +7,8 @@ export interface MenuItem {
   inventoryId?: number;
 }
 
+
+
 export const getMenuItems = async (): Promise<MenuItem[]> => {
   const res = await api.get('/api/menu');
   return res.data;

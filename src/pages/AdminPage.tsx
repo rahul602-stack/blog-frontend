@@ -6,11 +6,13 @@ const AdminPage: React.FC = () => {
   const [newItem, setNewItem] = useState({ name: '', price: '' });
 
   useEffect(() => {
+     console.log("✅ AdminPage mounted");
     fetchMenu();
   }, []);
 
   const fetchMenu = async () => {
     const data = await getMenuItems();
+    console.log("📦 Menu items fetched:", data);
     setMenu(data);
   };
 

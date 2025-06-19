@@ -11,22 +11,50 @@ const Login: React.FC = () => {
   const { login: authLogin } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await login(username, password);
-      // Map API response into correct User object for context
-      authLogin({
-        id: response.user.id,
-        username: response.user.username,
-        role: response.user.role,
-        token: response.token
-      });
-      navigate('/');
-    } catch (err) {
-      setError('Login failed');
-    }
-  };
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    const response = await login(username, password);
+
+    // Save user to context
+    authLogin({
+      id: response.user.id,
+      username: response.user.username,
+      role: response.user.role,
+      token: response.token,
+    });
+
+    
+ if (response.user.role === 'ADMIN') {
+  navigate('/admin');
+} else if (response.user.role === 'CHEF') {
+  navigate('/chef');
+} else if (response.user.role === 'CASHIER') {
+  navigate('/cashier');
+} else if (response.user.role === 'BRANCH_MANAGER') {
+  navigate('/manager');
+} else if (response.user.role === 'HQ_MANAGER') {
+  navigate('/hq');
+} else if (response.user.role === 'SUPPORT') {
+  navigate('/support');
+} else if (response.user.role === 'DELIVERY') {
+  navigate('/delivery'); //
+} else {
+  navigate('/');
+}
+
+
+
+
+
+
+
+  } catch (err) {
+    setError('Login failed');
+  }
+};
+
+
 
   return (
     <div className="container">

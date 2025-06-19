@@ -26,14 +26,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  const login = (userData: User) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
-  };
+ 
+ const login = (userData: User) => {
+  setUser(userData);
+  localStorage.setItem('user', JSON.stringify(userData));
+
+  if (userData.username === 'rahul123') {
+    localStorage.setItem('isAdmin', 'true');
+  } else {
+    localStorage.removeItem('isAdmin');
+  }
+};
+
+
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('isAdmin');
   };
 
   return (
@@ -50,4 +60,5 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
+
 

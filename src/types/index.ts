@@ -1,12 +1,14 @@
-// Data models based on the Blog API documentation
+type UserRole = 'ADMIN' | 'CHEF' | 'CASHIER' | 'CUSTOMER' | 'WRITER' | 'KITCHEN'; // Add all roles
 
 export interface User {
-  id: number;
+  id: number | string;
   username: string;
-  role: 'WRITER' | 'ADMIN';
-  createdAt: string;
-  updatedAt: string;
+  role: string;
+  token: string;
 }
+
+
+
 
 export interface Post {
   id: number;
