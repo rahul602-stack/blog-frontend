@@ -30,6 +30,7 @@ import OpenAreaPage from './pages/OpenAreaPage';
 import SupportPage from './pages/SupportPage';
 import FeedbackPage from './pages/FeedbackPage';
 
+
 import './index.css';
 
 const App: React.FC = () => {
@@ -50,6 +51,7 @@ const App: React.FC = () => {
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/feedback" element={<FeedbackPage />} />
+            
 
 
             {/* Customer */}

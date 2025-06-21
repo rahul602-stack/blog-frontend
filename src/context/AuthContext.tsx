@@ -5,6 +5,7 @@ interface User {
   username: string;
   role: string;
   token: string;
+  branch?: string; 
 }
 
 interface AuthContextType {

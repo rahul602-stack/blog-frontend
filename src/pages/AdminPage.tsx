@@ -1,124 +1,156 @@
-import React, { useEffect, useState } from 'react';
-import { getMenuItems, createMenuItem, deleteMenuItem, MenuItem } from '../services/menuService';
+import React, { useState } from 'react';
 
-const AdminPage: React.FC = () => {
-  const [menu, setMenu] = useState<MenuItem[]>([]);
-  const [newItem, setNewItem] = useState({ name: '', price: '' });
+const initialUsers = [
+  { id: 1, username: 'rahul123', role: 'ADMIN', branch: 'HQ' },
+  { id: 2, username: 'cashier123', role: 'CASHIER', branch: 'Branch A' },
+  { id: 3, username: 'manager123', role: 'BRANCH_MANAGER', branch: 'Branch A' },
+  { id: 4, username: 'hqmanager123', role: 'HQ_MANAGER', branch: 'All' },
+  { id: 5, username: 'support123', role: 'SUPPORT', branch: 'HQ' },
+  { id: 6, username: 'delivery123', role: 'DELIVERY', branch: 'Logistics' },
+  { id: 7, username: 'chef123', role: 'CHEF', branch: 'Branch A' },
+  { id: 8, username: 'kitchen123', role: 'WRITER', branch: 'Kitchen' },
+  { id: 9, username: 'chefb123', role: 'CHEF', branch: 'Branch B' },
+  { id: 10, username: 'chefc123', role: 'CHEF', branch: 'Branch C' },
+  { id: 11, username: 'cashierb123', role: 'CASHIER', branch: 'Branch B' },
+  { id: 12, username: 'cashierc123', role: 'CASHIER', branch: 'Branch C' }
+];
 
-  useEffect(() => {
-     console.log("✅ AdminPage mounted");
-    fetchMenu();
-  }, []);
 
-  const fetchMenu = async () => {
-    const data = await getMenuItems();
-    console.log("📦 Menu items fetched:", data);
-    setMenu(data);
+const roles = [
+  'ADMIN', 'CHEF', 'CASHIER', 'CUSTOMER',
+  'SUPPORT', 'DELIVERY', 'HQ_MANAGER', 'BRANCH_MANAGER', 'WRITER'
+];
+
+const branches = ['Branch A', 'Branch B', 'Branch C', 'HQ', 'Kitchen', 'Logistics'];
+
+const AdminPage = () => {
+  const [users, setUsers] = useState(initialUsers);
+
+  const handleRoleChange = (id: number, newRole: string) => {
+    setUsers(prev => prev.map(u => (u.id === id ? { ...u, role: newRole } : u)));
   };
 
-  const handleDelete = async (id: number) => {
-    await deleteMenuItem(id);
-    fetchMenu();
-  };
-
-  const handleAdd = async () => {
-    if (!newItem.name || !newItem.price) return alert("Please enter both name and price");
-    const price = parseFloat(newItem.price);
-    if (isNaN(price)) return alert("Price must be a number");
-
-    await createMenuItem({ name: newItem.name, price });
-    setNewItem({ name: '', price: '' });
-    fetchMenu();
+  const handleBranchChange = (id: number, newBranch: string) => {
+    setUsers(prev => prev.map(u => (u.id === id ? { ...u, branch: newBranch } : u)));
   };
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>👨‍🍳 Admin - Manage Menu</h1>
+      <h1 style={styles.heading}>👑 Admin Panel</h1>
+      <p style={styles.subheading}>Manage user roles and assign branches (only non-admin roles can switch branches)</p>
 
-      <div style={styles.addContainer}>
-        <input 
-          type="text" 
-          placeholder="Item Name" 
-          value={newItem.name} 
-          onChange={e => setNewItem({ ...newItem, name: e.target.value })} 
-          style={styles.input}
-        />
-        <input 
-          type="text" 
-          placeholder="Price" 
-          value={newItem.price} 
-          onChange={e => setNewItem({ ...newItem, price: e.target.value })} 
-          style={styles.input}
-        />
-        <button onClick={handleAdd} style={styles.addButton}>Add Item</button>
-      </div>
-
-      <ul style={styles.menuList}>
-        {menu.map((item) => (
-          <li key={item.id} style={styles.menuItem}>
-            <span>{item.name} - ${item.price.toFixed(2)}</span>
-            <button onClick={() => handleDelete(item.id)} style={styles.deleteButton}>Delete</button>
-          </li>
-        ))}
-      </ul>
+      <table style={styles.table}>
+        <thead>
+          <tr>
+            <th style={styles.th}>👤 Username</th>
+            <th style={styles.th}>🔖 Role</th>
+            <th style={styles.th}>🏢 Branch</th>
+            <th style={styles.th}>🛠️ Change Role</th>
+            <th style={styles.th}>📍 Assign Branch</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map(user => (
+            <tr key={user.id} style={styles.tr}>
+              <td style={styles.td}>{user.username}</td>
+              <td style={{ ...styles.td, color: getRoleColor(user.role) }}>{user.role}</td>
+              <td style={styles.td}>{user.branch}</td>
+              <td style={styles.td}>
+                <select
+                  value={user.role}
+                  onChange={e => handleRoleChange(user.id, e.target.value)}
+                  style={styles.select}
+                >
+                  {roles.map(role => (
+                    <option key={role} value={role}>{role}</option>
+                  ))}
+                </select>
+              </td>
+              <td style={styles.td}>
+                {user.role !== 'ADMIN' && user.role !== 'HQ_MANAGER' ? (
+                  <select
+                    value={user.branch}
+                    onChange={e => handleBranchChange(user.id, e.target.value)}
+                    style={styles.select}
+                  >
+                    {branches.map(branch => (
+                      <option key={branch} value={branch}>{branch}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <span style={{ color: '#999' }}>Not Allowed</span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
 
+// Role color highlighting
+const getRoleColor = (role: string): string => {
+  switch (role) {
+    case 'ADMIN': return '#d9534f';
+    case 'CHEF': return '#f0ad4e';
+    case 'CASHIER': return '#0275d8';
+    case 'SUPPORT': return '#5bc0de';
+    case 'DELIVERY': return '#5cb85c';
+    case 'WRITER': return '#9370DB';
+    default: return '#333';
+  }
+};
+
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
-    maxWidth: '700px',
-    margin: '0 auto',
-    padding: '30px',
-    fontFamily: 'Arial, sans-serif',
+    padding: '40px',
+    fontFamily: 'Segoe UI, sans-serif',
+    background: '#f9f9f9',
+    minHeight: '100vh'
   },
-  title: {
-    fontSize: '32px',
+  heading: {
+    fontSize: '36px',
+    fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: '40px',
+    color: '#333',
+    marginBottom: '10px'
   },
-  addContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '10px',
+  subheading: {
+    fontSize: '16px',
+    textAlign: 'center',
     marginBottom: '30px',
+    color: '#666'
   },
-  input: {
-    padding: '10px',
-    fontSize: '16px',
-    width: '40%',
-  },
-  addButton: {
-    padding: '10px 20px',
-    fontSize: '16px',
-    backgroundColor: '#28a745',
-    color: '#fff',
-    borderRadius: '5px',
-    border: 'none',
-    cursor: 'pointer',
-  },
-  menuList: {
-    listStyleType: 'none',
-    padding: 0,
-  },
-  menuItem: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    backgroundColor: '#f9f9f9',
-    padding: '15px 20px',
+  table: {
+    width: '100%',
+    borderCollapse: 'collapse',
     borderRadius: '8px',
-    marginBottom: '15px',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+    overflow: 'hidden',
+    boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+    background: '#fff'
   },
-  deleteButton: {
-    padding: '8px 16px',
-    fontSize: '14px',
-    backgroundColor: '#dc3545',
+  th: {
+    background: '#007BFF',
     color: '#fff',
-    borderRadius: '5px',
-    border: 'none',
-    cursor: 'pointer',
+    padding: '12px 16px',
+    textAlign: 'left',
+    fontSize: '14px'
   },
+  td: {
+    padding: '12px 16px',
+    borderBottom: '1px solid #eee',
+    fontSize: '14px'
+  },
+  tr: {
+    transition: 'background 0.2s',
+  },
+  select: {
+    padding: '6px 8px',
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+    fontSize: '14px'
+  }
 };
 
 export default AdminPage;

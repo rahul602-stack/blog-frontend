@@ -37,13 +37,18 @@ const Navbar: React.FC = () => {
         <li><Link to="/admin">Admin Panel</Link></li>
       ) : null}
 
-              {user.role === 'CHEF' && (
+             {user.role === 'CHEF' && (
   <>
     <span style={{ marginRight: '10px' }}><strong>👨‍🍳 Chef</strong></span>
     <Link to="/chef">Chef Panel</Link>
-    <Link to="/kitchen">Kitchen</Link>
   </>
 )}
+
+
+{user?.username === "kitchen123" && (
+  <Link to="/kitchen">Kitchen</Link>
+)}
+
 
 {user?.role === 'CASHIER' && (
   <>

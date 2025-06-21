@@ -12,13 +12,20 @@ const api = axios.create({
 });
 
 // Attach token to every request if available
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// 👇 Add this interceptor to attach the token
+api.interceptors.request.use(
+  (config) => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      const { token } = JSON.parse(user);
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+
 
 // Authentication
 export const signup = async (username: string, password: string): Promise<AuthResponse> => {

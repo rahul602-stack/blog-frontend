@@ -1,73 +1,105 @@
-import React, { useEffect, useState } from 'react';
-import { getHQSalesReport, HQSalesReport } from '../services/hqReportService';
+import React from 'react';
 
-const HQManagerPage: React.FC = () => {
-  const [hqSales, setHQSales] = useState<HQSalesReport[]>([]);
-  const [error, setError] = useState<string>('');
+const salesData = [
+  { branch: 'Branch A', date: '2024-06-15', orders: 12, revenue: 620.50 },
+  { branch: 'Branch A', date: '2024-06-16', orders: 9, revenue: 480.00 },
+  { branch: 'Branch B', date: '2024-06-15', orders: 10, revenue: 530.25 },
+  { branch: 'Branch B', date: '2024-06-16', orders: 7, revenue: 390.75 },
+  { branch: 'Branch C', date: '2024-06-15', orders: 6, revenue: 270.00 },
+  { branch: 'Branch C', date: '2024-06-16', orders: 8, revenue: 355.10 }
+];
 
-  useEffect(() => {
-    loadHQData();
-  }, []);
+const getTotal = (key: 'orders' | 'revenue') =>
+  salesData.reduce((sum, row) => sum + row[key], 0).toFixed(2);
 
-  const loadHQData = async () => {
-    try {
-      const salesData = await getHQSalesReport();
-      setHQSales(salesData);
-    } catch (err) {
-      setError('Failed to load HQ sales');
-    }
-  };
-
+const HqManagerPage = () => {
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h1 style={{ fontSize: '32px', marginBottom: '20px' }}>🏢 HQ Manager Dashboard</h1>
+    <div style={styles.container}>
+      <h1 style={styles.title}>🏢 HQ Manager Dashboard</h1>
+      <h2 style={styles.subtitle}>📊 Branch Sales Summary</h2>
 
-      <h2>Branch Sales Summary</h2>
-      {hqSales.length === 0 ? (
-        <p>No HQ sales data</p>
-      ) : (
-        <table style={tableStyle}>
-          <thead>
-            <tr>
-              <th style={thStyle}>Branch</th>
-              <th style={thStyle}>Total Orders</th>
-              <th style={thStyle}>Total Revenue ($)</th>
+      <table style={styles.table}>
+        <thead>
+          <tr>
+            <th style={styles.th}>Branch</th>
+            <th style={styles.th}>Date</th>
+            <th style={styles.th}>Total Orders</th>
+            <th style={styles.th}>Revenue ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {salesData.map((row, index) => (
+            <tr key={index} style={index % 2 === 0 ? styles.rowEven : styles.rowOdd}>
+              <td style={styles.td}>{row.branch}</td>
+              <td style={styles.td}>{row.date}</td>
+              <td style={styles.td}>{row.orders}</td>
+              <td style={styles.td}>${row.revenue.toFixed(2)}</td>
             </tr>
-          </thead>
-          <tbody>
-            {hqSales.map((branchData, idx) => (
-              <tr key={idx}>
-                <td style={tdStyle}>{branchData.branch}</td>
-                <td style={tdStyle}>{branchData.totalOrders}</td>
-                <td style={tdStyle}>{branchData.totalRevenue.toFixed(2)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+          ))}
+          <tr style={styles.totalRow}>
+            <td style={styles.tdBold}>Total</td>
+            <td></td>
+            <td style={styles.tdBold}>{getTotal('orders')}</td>
+            <td style={styles.tdBold}>${getTotal('revenue')}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 };
 
-const tableStyle: React.CSSProperties = {
-  borderCollapse: 'collapse',
-  width: '60%',
-  boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+const styles: { [key: string]: React.CSSProperties } = {
+  container: {
+    padding: '40px',
+    fontFamily: 'Segoe UI, sans-serif',
+    backgroundColor: '#f4f6f8',
+    minHeight: '100vh'
+  },
+  title: {
+    fontSize: '32px',
+    marginBottom: '10px',
+    textAlign: 'center',
+    color: '#2c3e50'
+  },
+  subtitle: {
+    fontSize: '22px',
+    marginBottom: '25px',
+    color: '#34495e'
+  },
+  table: {
+    width: '100%',
+    borderCollapse: 'collapse',
+    boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+    backgroundColor: '#fff',
+    borderRadius: '8px',
+    overflow: 'hidden'
+  },
+  th: {
+    backgroundColor: '#3498db',
+    color: '#fff',
+    padding: '14px',
+    textAlign: 'left',
+    fontSize: '15px'
+  },
+  td: {
+    padding: '12px 14px',
+    borderBottom: '1px solid #eee',
+    fontSize: '14px'
+  },
+  tdBold: {
+    fontWeight: 'bold',
+    padding: '12px 14px',
+    fontSize: '15px'
+  },
+  rowEven: {
+    backgroundColor: '#fafafa'
+  },
+  rowOdd: {
+    backgroundColor: '#fff'
+  },
+  totalRow: {
+    backgroundColor: '#ecf0f1'
+  }
 };
 
-const thStyle: React.CSSProperties = {
-  border: '1px solid #ccc',
-  padding: '10px',
-  backgroundColor: '#f4f4f4',
-  textAlign: 'center',
-};
-
-const tdStyle: React.CSSProperties = {
-  border: '1px solid #ccc',
-  padding: '10px',
-  textAlign: 'center',
-};
-
-export default HQManagerPage;
+export default HqManagerPage;
